@@ -1,0 +1,12 @@
+{
+    "json.schemas": [
+    
+    ],
+    "chat.viewSessions.orientation": "stacked",
+    "python.analysis.extraPaths": ["/opt/anaconda3/envs/new_testing/lib/python3.13/site-packages"],
+    "python.defaultInterpreterPath": "/opt/anaconda3/envs/new_testing/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
+    "terminal.integrated.inheritEnv": false,
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda"
+}

@@ -1,0 +1,73 @@
+代码目的
+这是一个网页爬虫脚本，用于从 OpenRice（香港著名的餐厅评分平台）自动抓取餐厅信息，并将数据导出到 CSV 文件。
+
+核心功能分解
+1. 导入依赖库
+Python
+import requests, BeautifulSoup, csv, time, selenium...
+requests & BeautifulSoup: 发送 HTTP 请求和解析 HTML
+selenium: 控制浏览器自动化（处理动态加载内容）
+csv: 数据写入 CSV 文件
+urllib3: 禁用 SSL 警告
+2. 数据配置
+Python
+BASE_URL = "https://www.openrice.com"
+URLS = [...]  # 四个搜索链接
+定义要爬取的餐厅列表页面 URL（按地区/菜系筛选）
+包括：上环区、港式菜、西餐等分类
+主要函数解析
+📍 get_all_restaurant_links(listing_url, limit=None)
+目的：从列表页面提取所有餐厅链接
+
+工作流程：
+
+启动 Chrome 浏览器驱动（Selenium）
+无限滚动加载：自动向下滚动页面以加载所有餐厅（最多滚动 150 次）
+提取所有class为 poi-list-cell-desktop-right-link-overlay 的链接元素
+返回完整的餐厅详情页面 URL 列表
+为什么需要 Selenium？ 因为 OpenRice 使用动态加载，单纯的 requests 无法获取完整内容。
+
+📍 get_brand_name(outlet_name)
+目的：从餐厅名称中提取品牌名
+
+例子：
+
+输入："McDonald's (麦当劳)"
+输出："McDonald's"
+使用正则表达式匹配 ( 或 （ 之前的文本。
+
+📍 get_restaurant_info(url)
+目的：从单个餐厅详情页面抓取信息
+
+抓取内容：
+
+字段	来源 HTML
+中文名称	<span class="name">
+英文名称	<div class="smaller-font-name">
+地址	<a data-href="#map">
+主程序流程
+Python
+if __name__ == "__main__":
+执行步骤：
+
+✅ 遍历 URLS 列表中的所有搜索链接
+✅ 对每个链接调用 get_all_restaurant_links() 获取餐厅 URL
+✅ 使用 set() 去重（避免重复餐厅）
+✅ 对每个餐厅 URL 调用 get_restaurant_info() 抓取详情
+✅ 提取品牌名称
+✅ 将数据写入 CSV 文件 (results.csv)
+输出数据格式
+最终生成的 CSV 包含 5 列：
+
+Code
+Brand Name | Outlet Name | Outlet English Name | Address | Source
+----------|-------------|-------------------|---------|--------
+McDonald's | 麦当劳 | McDonald's | 中環... | OpenRice
+关键设计细节
+特性	说明
+延迟处理	time.sleep() 避免服务器封禁
+错误处理	try-except 捕获单个页面错误，继续执行
+HTTP 头伪装	使用 User-Agent 模拟真实浏览器
+SSL 警告禁用	允许不安全的 HTTPS 连接
+总结
+这个脚本自动化地从 OpenRice 抓取特定地区/菜系的餐厅数据，适合用于餐厅数据分析、市场研究或建立餐厅数据库。 🍽️
